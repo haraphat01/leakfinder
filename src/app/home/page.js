@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Testimonials from '../components/swiper';
 
+
 export default function Homepage() {
     return (
         <div className="bg-white text-gray-800 min-h-screen flex flex-col justify-center items-center">
