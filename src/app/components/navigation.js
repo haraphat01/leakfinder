@@ -17,7 +17,7 @@ export default function Navbar() {
             <Link href="/about" className="text-lg px-4 hover:underline">
               About
             </Link>
-            <Link href="/contact" className="text-lg px-4 hover:underline">
+            <Link href="/login" className="text-lg px-4 hover:underline">
               Login
             </Link>
           </nav>
