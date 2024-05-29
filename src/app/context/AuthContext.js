@@ -8,7 +8,7 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-
+ console.log(user)
   useEffect(() => {
     const unsubscribe = auth.onIdTokenChanged(async (user) => {
       if (!user) {

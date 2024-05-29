@@ -5,7 +5,8 @@ import Image from "next/image";
 import logo from "../../../public/images/logo.png"
 import { useRouter } from 'next/navigation'
 import { signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from 'firebase/auth';
-import { auth } from "../firebase/config"
+import { doc, getDoc, setDoc } from "firebase/firestore"; 
+import { auth, db } from "../firebase/config"
 const Navbar = () => {
   const [user, setUser] = useState("")
   const router = useRouter()
@@ -27,17 +28,34 @@ const Navbar = () => {
   }, []);
 
   const signInWithGoogle = async (event) => {
-      event.preventDefault();
+    event.preventDefault();
 
-      const provider = new GoogleAuthProvider();
-      try {
-          await signInWithPopup(auth, provider);
-          alert("Sign-in successful!"); // Alert the user
-          router.push("/dashboard"); // Redirect to the dashboard page
-      } catch (error) {
-          console.log("Error signing in", error.message);
-      }
-  }
+    const provider = new GoogleAuthProvider();
+    try {
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+        console.log("user", user);
+
+        const userDoc = doc(db, "users", user.uid);
+        const userSnap = await getDoc(userDoc);
+
+        if (!userSnap.exists()) {
+            // If user does not exist, create user in Firestore
+            await setDoc(userDoc, { 
+                email: user.email,
+                name: user.displayName, 
+                credits: 0 
+            });
+        }
+
+        alert("Sign-in successful!"); // Alert the user
+
+        router.push("/dashboard"); // Redirect to the dashboard page
+    } catch (error) {
+        console.log("Error signing in", error.message);
+    }
+}
+
 
   return (
       <div className="bg-gray-900 text-white">
