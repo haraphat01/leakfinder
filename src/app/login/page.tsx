@@ -4,7 +4,7 @@ export default function LoginPage() {
   return (
     <div className="flex justify-center items-center min-h-screen bg-white">
       <form className="bg-black-100 p-8 rounded-lg shadow-md w-full max-w-md">
-        <h2 className="text-2xl font-semibold mb-6 text-center">LoginSign up</h2>
+        <h2 className="text-2xl font-semibold mb-6 text-center">Login I Sign up</h2>
         <div className="mb-4">
           <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">Email:</label>
           <input
