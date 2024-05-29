@@ -3,16 +3,16 @@ import ProtectedRoute from '../components/ProtectedRoute';
 import { useEffect, useContext, useState } from 'react';
 import { useRouter } from 'next/navigation'
 import { auth, db } from "../firebase/config"
-// const { user, setUser } = useContext(UserContext);
-
-// import Sidebar from "../components/Sidebar"
-
+import { useAuth } from '../context/AuthContext';
+import { doc, getDoc, setDoc } from "firebase/firestore"; 
 
 
 export default function Dashboard() {
-    const [searchInput, setSearchInput] = useState('');
+const [searchInput, setSearchInput] = useState('');
 const [searchResult, setSearchResult] = useState(null);
 const [credits, setCredits] = useState(0);
+const { user, setUser } =  useAuth();
+
 const router = useRouter();
     useEffect(() => {
         if (user) {
@@ -24,7 +24,7 @@ const router = useRouter();
             };
             fetchCredits();
         } else {
-            router.push('/login');
+            router.push('/');
         }
     }, [user]);
 
@@ -76,7 +76,7 @@ const router = useRouter();
           </div>
         )}
         <div className="mt-4">
-          <PurchaseCredits />
+          {/* <PurchaseCredits /> */}
         </div>
       </div>
     </div>
