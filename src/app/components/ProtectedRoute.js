@@ -5,10 +5,7 @@ import { useEffect } from 'react';
 
 const ProtectedRoute = ({ children }) => {
   const { user } = useAuth();
-   console.log("user from route",user)
   const router = useRouter();
-  
-
   useEffect(() => {
     if (user === null) {
     alert('Please log in to access the dashboard.');

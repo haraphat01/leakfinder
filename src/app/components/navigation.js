@@ -7,8 +7,11 @@ import { useRouter } from 'next/navigation'
 import { signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from 'firebase/auth';
 import { doc, getDoc, setDoc } from "firebase/firestore"; 
 import { auth, db } from "../firebase/config"
+import PAYMENTLINK from '../constant';
+
 const Navbar = () => {
   const [user, setUser] = useState("")
+  console.log("user testin",user.email)
   const router = useRouter()
   const [isOpen, setIsOpen] = useState(false);
 
@@ -77,9 +80,14 @@ const Navbar = () => {
                           </Link>
   
                           {user ? (
-                              <button onClick={() => signOut(auth)} className="px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700">
-                                  Log out
-                              </button>
+                               <>
+                               <a href={`${PAYMENTLINK}?prefill_email=${user.email}`} target="_blank" className="px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700">
+                                  Buy Credit
+                              </a>
+                               <button onClick={() => signOut(auth)} className="px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700">
+                                   Log out
+                               </button>
+                           </>
                           ) : (
                               <button onClick={signInWithGoogle} className="px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700">
                                   Log in
@@ -134,11 +142,26 @@ const Navbar = () => {
                       <Link href="/dashboard" className="block px-3 py-2 rounded-md text-base font-medium bg-white text-blue-600 hover:bg-gray-100">
                           Dashboard
                       </Link>
+                      {user ? (
+                          <>
+                               <a href={`${PAYMENTLINK}?prefill_email=${user.email}`} target="_blank" className="px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700">
+                                  Buy Credit
+                              </a>
+                              <button onClick={() => signOut(auth)} className="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-blue-700">
+                                  Log out
+                              </button>
+                          </>
+                      ) : (
+                          <button onClick={signInWithGoogle} className="block w-full text-left px-3 py-2 rounded-md text-base font-medium hover:bg-blue-700">
+                              Log in
+                          </button>
+                      )}
                   </div>
               </div>
           )}
       </div>
   );
 };
+
 
 export default Navbar;

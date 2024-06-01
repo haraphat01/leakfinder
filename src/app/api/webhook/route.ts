@@ -3,9 +3,7 @@ import admin from 'firebase-admin';
 import { headers } from 'next/headers';
 import Stripe from 'stripe';
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
-import { doc, getDoc, setDoc, getDocs, updateDoc, increment, collection } from "firebase/firestore";
-// import { db } from '../../firebase/config';
-import { useAuth } from '../../context/AuthContext';
+
 
 if (!admin.apps.length) {
   admin.initializeApp({
