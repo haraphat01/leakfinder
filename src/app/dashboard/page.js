@@ -4,7 +4,9 @@ import { useEffect, useContext, useState } from 'react';
 import { useRouter } from 'next/navigation'
 import { auth, db } from "../firebase/config"
 import { useAuth } from '../context/AuthContext';
-import { doc, getDoc, setDoc } from "firebase/firestore"; 
+import { doc, getDoc, setDoc, updateDoc,increment } from "firebase/firestore"; 
+import PurchaseCredits from "../components/PurchaseCredits"
+import Link from 'next/link';
 
 
 export default function Dashboard() {
@@ -77,6 +79,8 @@ const router = useRouter();
         )}
         <div className="mt-4">
           {/* <PurchaseCredits /> */}
+          <Link href="/stripe" aria-current="page">Buy Credit</Link>
+
         </div>
       </div>
     </div>
