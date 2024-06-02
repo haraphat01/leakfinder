@@ -7,6 +7,7 @@ import { useAuth } from '../context/AuthContext';
 import { doc, getDoc, setDoc, updateDoc, increment } from "firebase/firestore"; 
 import PAYMENTLINK from '../constant'
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function Dashboard() {
   const [searchInput, setSearchInput] = useState('');
@@ -53,8 +54,13 @@ export default function Dashboard() {
     <ProtectedRoute>
       <div className="min-h-screen bg-white p-4 sm:p-8">
         <div className="bg-black text-white p-6 sm:p-8 rounded shadow-md max-w-lg mx-auto">
-          <h2 className="text-2xl sm:text-3xl mb-4">Search for a Record</h2>
-          <p className="mb-4">Credits: {credits}</p>
+          <div className="flex justify-between items-center mb-4">
+            <div>
+              <h2 className="text-2xl sm:text-3xl mb-4">Search for a Record</h2>
+              <p className="mb-4">Credits left: {credits}</p>
+            </div>
+           
+          </div>
           <div className="mb-4">
             <input
               type="text"
