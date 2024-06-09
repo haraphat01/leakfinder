@@ -1,29 +1,42 @@
-const mongoose = require('mongoose');
-const LeadResult = require('./models/LeadResult'); // Import your LeadResult model
+import { NextRequest, NextResponse } from 'next/server';
+import clientPromise from '../../lib/mongodb';
 
-// Connect to MongoDB
-mongoose.connect('mongodb://localhost:27017/mydatabase', { useNewUrlParser: true, useUnifiedTopology: true });
+export async function POST(req) {
+  
 
-// Search function
-const searchLead = async (query) => {
-    consile.log("result from the frontend",query)
-    try {
-        const result = await LeadResult.findOne({
-            $or: [
-                { emails: query },
-                { phone_numbers: query }
-            ]
-        });
+  if (req.method !== 'POST') {
+    return NextResponse.json({ error: 'Method not allowed' }, { status: 405 });
+  }
+  let passedValue = await new Response(req.body).text();
+  let bodyreq = JSON.parse(passedValue);
+ 
+  const { email, phoneNumber } = await bodyreq;
+  console.log("request from the frontend", email);
+  if (!email && !phoneNumber) {
+    return NextResponse.json({ error: 'Email or phone number is required' }, { status: 400 });
+  }
 
-        if (result) {
-            // Send the result back to the client
-            return result;
-        } else {
-            return "No matching record found";
-        }
-    } catch (error) {
-        console.error(error);
-        return "An error occurred";
+  try {
+    const client = await clientPromise;
+    const db = client.db('leakfinder'); // Replace with your database name
+    const collection = db.collection('leads'); // Replace with your collection name
+
+    const query = {
+      $or: [
+        { emails: email },
+        { phone_numbers: phoneNumber }
+      ]
+    };
+
+    const lead = await collection.findOne(query);
+
+    if (!lead) {
+      return NextResponse.json({ error: 'Lead not found' }, { status: 404 });
     }
-};
 
+    return NextResponse.json(lead, { status: 200 });
+  } catch (error) {
+    console.error('Error fetching lead:', error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+  }
+}

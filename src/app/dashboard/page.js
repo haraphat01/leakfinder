@@ -1,22 +1,18 @@
 "use client"
 import ProtectedRoute from '../components/ProtectedRoute';
-import { useEffect, useContext, useState } from 'react';
-import { useRouter } from 'next/navigation'
-import { auth, db } from "../firebase/config"
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { db } from "../firebase/config";
 import { useAuth } from '../context/AuthContext';
-import { doc, getDoc, setDoc, updateDoc, increment } from "firebase/firestore";
-import PAYMENTLINK from '../constant'
+import { doc, getDoc, updateDoc, increment } from "firebase/firestore";
 import Link from 'next/link';
-import Image from 'next/image';
 
 export default function Dashboard() {
   const [searchInput, setSearchInput] = useState('');
   const [searchResult, setSearchResult] = useState(null);
   const [credits, setCredits] = useState(0);
-  const { user, setUser } = useAuth();
+  const { user } = useAuth();
   const router = useRouter();
-
-
 
   useEffect(() => {
     if (user) {
@@ -30,28 +26,34 @@ export default function Dashboard() {
     } else {
       router.push('/');
     }
-  }, [user]);
+  }, [user, router]);
 
   const handleSearch = async (e) => {
-    console.log("search input", searchInput)
+    e.preventDefault();
     if (credits <= 0) {
       alert('You do not have enough credits to perform a search.');
       return;
     }
 
-    // Mock search operation
     try {
-      const response = await fetch('api/leadResults', {
+      const response = await fetch('/api/leadResults', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ searchInput }),
+        body: JSON.stringify({ email: searchInput, phoneNumber: searchInput }),
       });
 
       if (response.ok) {
         const data = await response.json();
-        setSearchResult(data.result);
+        setSearchResult(data);
+
+        // Deduct credits only if search was successful
+        const userRef = doc(db, "users", user.uid);
+        await updateDoc(userRef, {
+          credits: increment(-1)
+        });
+        setCredits(credits - 1);
       } else {
         alert('Failed to fetch search results');
       }
@@ -59,13 +61,6 @@ export default function Dashboard() {
       console.error('Error fetching search results:', error);
       alert('An error occurred while fetching search results');
     }
-
-    const userRef = doc(db, "users", user.uid);
-    await updateDoc(userRef, {
-      credits: increment(-1)
-    });
-
-    setCredits(credits - 1);
   };
 
   return (
@@ -77,9 +72,8 @@ export default function Dashboard() {
               <h2 className="text-2xl sm:text-3xl mb-4">Search for a Record</h2>
               <p className="mb-4">Credits left: {credits}</p>
             </div>
-
           </div>
-          <div className="mb-4">
+          <form onSubmit={handleSearch} className="mb-4">
             <input
               type="text"
               placeholder="Enter email or phone number"
@@ -88,19 +82,25 @@ export default function Dashboard() {
               className="w-full p-2 mb-4 border border-gray-300 rounded text-black"
             />
             <button
-              onClick={handleSearch}
+              type="submit"
               className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
             >
               Search
             </button>
-          </div>
+          </form>
           {searchResult && (
-            <div className="mt-4 p-4 bg-gray-800 rounded">
-              <p>{searchResult}</p>
+            <div className="mt-4 p-4 bg-gray-800 rounded text-white">
+              <h3 className="text-xl font-bold mb-2">Search Result:</h3>
+              <p><strong>First Name:</strong> {searchResult.first_name}</p>
+              <p><strong>Last Name:</strong> {searchResult.last_name}</p>
+              <p><strong>Gender:</strong> {searchResult.gender}</p>
+              <p><strong>Phone Number:</strong> {searchResult.phone_numbers}</p>
+              <p><strong>Email:</strong> {searchResult.emails}</p>
+              <p><strong>Address:</strong> {searchResult.address}</p>
             </div>
           )}
         </div>
       </div>
     </ProtectedRoute>
-  )
-};
+  );
+}
