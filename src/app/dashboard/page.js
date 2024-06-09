@@ -4,7 +4,7 @@ import { useEffect, useContext, useState } from 'react';
 import { useRouter } from 'next/navigation'
 import { auth, db } from "../firebase/config"
 import { useAuth } from '../context/AuthContext';
-import { doc, getDoc, setDoc, updateDoc, increment } from "firebase/firestore"; 
+import { doc, getDoc, setDoc, updateDoc, increment } from "firebase/firestore";
 import PAYMENTLINK from '../constant'
 import Link from 'next/link';
 import Image from 'next/image';
@@ -14,8 +14,10 @@ export default function Dashboard() {
   const [searchResult, setSearchResult] = useState(null);
   const [credits, setCredits] = useState(0);
   const { user, setUser } = useAuth();
-
   const router = useRouter();
+
+
+
   useEffect(() => {
     if (user) {
       const fetchCredits = async () => {
@@ -30,23 +32,39 @@ export default function Dashboard() {
     }
   }, [user]);
 
-  const handleSearch = async () => {
+  const handleSearch = async (e) => {
+    console.log("search input", searchInput)
     if (credits <= 0) {
       alert('You do not have enough credits to perform a search.');
       return;
     }
 
     // Mock search operation
-    const mockResult = `Search result for ${searchInput}: No data found.`;
-    setSearchResult(mockResult);
+    try {
+      const response = await fetch('api/leadResults', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ searchInput }),
+      });
 
-    // Deduct credit
+      if (response.ok) {
+        const data = await response.json();
+        setSearchResult(data.result);
+      } else {
+        alert('Failed to fetch search results');
+      }
+    } catch (error) {
+      console.error('Error fetching search results:', error);
+      alert('An error occurred while fetching search results');
+    }
+
     const userRef = doc(db, "users", user.uid);
     await updateDoc(userRef, {
       credits: increment(-1)
     });
 
-    // Update local state
     setCredits(credits - 1);
   };
 
@@ -59,7 +77,7 @@ export default function Dashboard() {
               <h2 className="text-2xl sm:text-3xl mb-4">Search for a Record</h2>
               <p className="mb-4">Credits left: {credits}</p>
             </div>
-           
+
           </div>
           <div className="mb-4">
             <input

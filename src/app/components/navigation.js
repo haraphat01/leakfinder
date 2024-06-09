@@ -11,7 +11,7 @@ import PAYMENTLINK from '../constant';
 
 const Navbar = () => {
   const [user, setUser] = useState("")
-  console.log("user testin",user.email)
+ 
   const router = useRouter()
   const [isOpen, setIsOpen] = useState(false);
 
@@ -37,11 +37,10 @@ const Navbar = () => {
     try {
         const result = await signInWithPopup(auth, provider);
         const user = result.user;
-        console.log("user", user);
-
+        
         const userDoc = doc(db, "users", user.uid);
         const userSnap = await getDoc(userDoc);
-
+        console.log("users snap", userSnap)
         if (!userSnap.exists()) {
             // If user does not exist, create user in Firestore
             await setDoc(userDoc, { 

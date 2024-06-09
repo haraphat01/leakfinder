@@ -33,8 +33,8 @@ const PrivacyPolicy = () => {
         <p className="mb-4 text-gray-700">
           If you have any questions about this Privacy Policy, please contact us at support@leakfinder.com.
         </p>
-        <Link href="/">
-          <a className="text-blue-500 hover:underline">Go back to Home</a>
+        <Link href="/" className="text-blue-500 hover:underline">
+          Go back to Home
         </Link>
       </div>
     </div>
