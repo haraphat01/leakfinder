@@ -1,7 +1,7 @@
 // lib/mongodb.js
 import { MongoClient } from 'mongodb';
 
-const uri = process.env.MONGODB_URI; // Store your MongoDB URI in .env.local
+const uri = `mongodb+srv://leakfinder:abekeapo1.@serverlessinstance0.g4p5oue.mongodb.net/?retryWrites=true&w=majority&appName=ServerlessInstance0`; // Store your MongoDB URI in .env.local
 const options = {};
 
 let client;
@@ -23,3 +23,10 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 export default clientPromise;
+
+clientPromise.then(() => {
+  console.log('MongoDB connection successful');
+}).catch((error) => {
+  console.error('Error connecting to MongoDB:', error);
+});
+

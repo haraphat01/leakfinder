@@ -3,18 +3,18 @@ import clientPromise from '../../lib/mongodb';
 
 export async function POST(req) {
   
-
   if (req.method !== 'POST') {
     return NextResponse.json({ error: 'Method not allowed' }, { status: 405 });
   }
   let passedValue = await new Response(req.body).text();
+ 
   let bodyreq = JSON.parse(passedValue);
  
-  const { email, phoneNumber } = await bodyreq;
-  console.log("request from the frontend", email);
-  if (!email && !phoneNumber) {
-    return NextResponse.json({ error: 'Email or phone number is required' }, { status: 400 });
-  }
+  const { searchInput: email, searchInput: phoneNumber } = await bodyreq;
+  
+  // if (!email && !phoneNumber) {
+  //   return NextResponse.json({ error: 'Email or phone number is required' }, { status: 400 });
+  // }
 
   try {
     const client = await clientPromise;
@@ -29,7 +29,6 @@ export async function POST(req) {
     };
 
     const lead = await collection.findOne(query);
-
     if (!lead) {
       return NextResponse.json({ error: 'Lead not found' }, { status: 404 });
     }
