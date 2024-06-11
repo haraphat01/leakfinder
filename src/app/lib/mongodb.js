@@ -24,16 +24,16 @@ if (process.env.NODE_ENV === 'development') {
 
 export default clientPromise;
 
-clientPromise.then(() => {
-  console.log('MongoDB connection successful');
-}).catch((error) => {
-  console.error('Error connecting to MongoDB:', error);
-});
+// clientPromise.then(() => {
+//   console.log('MongoDB connection successful');
+// }).catch((error) => {
+//   console.error('Error connecting to MongoDB:', error);
+// });
 
-clientPromise.then((client) => {
-  if (client.isConnected()) {
-    console.log('Connection to MongoDB database established');
-  } else {
-    console.log('Connection to MongoDB database failed');
-  }
-});
+// clientPromise.then((client) => {
+//   if (client.isConnected()) {
+//     console.log('Connection to MongoDB database established');
+//   } else {
+//     console.log('Connection to MongoDB database failed');
+//   }
+// });
