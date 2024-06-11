@@ -14,6 +14,7 @@ export default function Dashboard() {
   const [searchResult, setSearchResult] = useState(null);
   const [credits, setCredits] = useState(0);
   const { user, setUser } = useAuth();
+  const [loading, setLoading] = useState(false)
   const router = useRouter();
 
 
@@ -33,12 +34,13 @@ export default function Dashboard() {
   }, [user]);
 
   const handleSearch = async (e) => {
-    
+  
     if (credits <= 0) {
       alert('You do not have enough credits to perform a search.');
       return;
     }
-
+   
+    setLoading(true);
     // Mock search operation
     const apiUrl = '/api/leadResults'
     try {
@@ -51,16 +53,20 @@ export default function Dashboard() {
       });
 
       if (response.ok) {
+      
         console.log("search response", response)
         const data = await response.json();
-        console.log("search response data", data)
+      
         setSearchResult(data);
+        setLoading(false)
       } else {
         alert('Failed to fetch search results');
       }
     } catch (error) {
       console.error('Error fetching search results:', error);
       alert('An error occurred while fetching search results');
+    } finally {
+      setLoading(false); // Set loading to false after the API call is completed
     }
 
     const userRef = doc(db, "users", user.uid);
@@ -99,6 +105,7 @@ export default function Dashboard() {
               Search
             </button>
           </div>
+          {loading && <p> Wait while I find the information for you</p>}
           {searchResult && (
             <div className="mt-4 p-4 bg-gray-800 rounded text-white">
               <h3 className="text-xl font-bold mb-2">Search Result:</h3>

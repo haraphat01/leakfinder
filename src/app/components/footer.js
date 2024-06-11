@@ -6,7 +6,7 @@ export default function Footer() {
 
       <footer className="bg-gray-900 text-white py-4 mt-12">
         <div className="container mx-auto text-center">
-          <p>&copy; 2024 LeakFinder. All rights reserved.</p>
+        <p>&copy; {new Date().getFullYear()} Leakfinder. All rights reserved.</p>
           <nav className="mt-2">
             <Link href="/privacy" className="px-2 hover:underline">
               Privacy Policy
